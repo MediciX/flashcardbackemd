@@ -22,6 +22,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
     const newUser = new User({ username, password: hashedPassword })
     await newUser.save()
+    console.log('[REGISTER] User saved:', newUser)
 
     res.status(201).json({ message: 'User registered successfully' })
   } catch (error) {
@@ -48,6 +49,16 @@ export const loginUser = async (req: Request, res: Response) => {
     res.json({ token })
   } catch (error) {
     console.error('Login error:', error)
+    res.status(500).json({ message: 'Server error' })
+  }
+}
+
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find({})
+    res.json(users)
+  } catch (error) {
+    console.error('Fetch users error:', error)
     res.status(500).json({ message: 'Server error' })
   }
 }
