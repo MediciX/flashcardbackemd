@@ -20,3 +20,5 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
 app.use('/api', userRoutes)
 app.use('/api/decks', deckRoutes);
+
+console.log(`API routes mounted at /api and /api/decks`);
