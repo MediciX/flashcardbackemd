@@ -21,6 +21,6 @@ const DeckSchema = new Schema<IDeck>({
     default: true,
     required: true,
   },
-});
+}, { versionKey: false });
 
 export default model<IDeck>("Deck", DeckSchema, "decks");

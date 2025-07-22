@@ -2,24 +2,23 @@ import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './src/config/db';
 import deckRoutes from './src/routes/decks';
+import cardRoutes from './src/routes/cards';
 import userRoutes from './src/routes/users'
-
+import progressRoutes from './src/routes/progress';
 dotenv.config();
+
+connectDB();
 
 const app = express();
 app.use(express.json());
 
-connectDB();
 
 app.get('/', (_, res) => {
-  res.send('Server running...');
+  res.send('API running...');
 });
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
 app.use('/api', userRoutes)
 app.use('/api/decks', deckRoutes);
+app.use('/api/cards', cardRoutes);
 app.use('/api/users', userRoutes)
-
-console.log(`API routes mounted at /api and /api/decks`);
+app.use('/api/progress', progressRoutes);

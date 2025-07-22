@@ -22,6 +22,6 @@ export const ProgressSchema = new Schema<IProgress>({
     ref: "Card",
     required: true,
   },
-});
+}, { versionKey: false });
 
 export default model<IProgress>("Progress", ProgressSchema, "progress");

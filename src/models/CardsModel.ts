@@ -20,6 +20,6 @@ export const CardSchema = new Schema<ICard>({
     ref: "Deck",
     required: true,
   },
-});
+}, { versionKey: false });
 
 export default model<ICard>("Card", CardSchema, "cards");

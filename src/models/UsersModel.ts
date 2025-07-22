@@ -22,7 +22,6 @@ const UserSchema = new Schema<IUser>(
       enum: ['user', 'admin'],
       default: 'user',
     },
-  }
-);
+  }, { versionKey: false });
 
 export default model<IUser>('User', UserSchema, 'users');
