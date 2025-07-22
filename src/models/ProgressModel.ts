@@ -24,4 +24,4 @@ export const ProgressSchema = new Schema<IProgress>({
   },
 });
 
-export default model<IProgress>("Progress", ProgressSchema);
+export default model<IProgress>("Progress", ProgressSchema, "progress");

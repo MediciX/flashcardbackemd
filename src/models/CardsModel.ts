@@ -22,4 +22,4 @@ export const CardSchema = new Schema<ICard>({
   },
 });
 
-export default model<ICard>("Card", CardSchema);
+export default model<ICard>("Card", CardSchema, "cards");

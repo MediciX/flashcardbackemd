@@ -23,4 +23,4 @@ const DeckSchema = new Schema<IDeck>({
   },
 });
 
-export default model<IDeck>("Deck", DeckSchema);
+export default model<IDeck>("Deck", DeckSchema, "decks");
