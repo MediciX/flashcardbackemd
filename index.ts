@@ -17,6 +17,9 @@ app.get('/', (_, res) => {
   res.send('API running...');
 });
 
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
 app.use('/api', userRoutes)
 app.use('/api/decks', deckRoutes);
 app.use('/api/cards', cardRoutes);
