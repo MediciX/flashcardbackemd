@@ -11,8 +11,14 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(express.json());
 
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.use(express.json());
 
 app.get('/', (_, res) => {
   res.send('API running...');
@@ -26,8 +32,3 @@ app.use('/api/decks', deckRoutes);
 app.use('/api/cards', cardRoutes);
 app.use('/api/users', userRoutes)
 app.use('/api/progress', progressRoutes);
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
