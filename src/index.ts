@@ -1,10 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import connectDB from './src/config/db';
-import deckRoutes from './src/routes/decks';
-import cardRoutes from './src/routes/cards';
-import userRoutes from './src/routes/users'
-import progressRoutes from './src/routes/progress';
+import connectDB from './config/db';
+import deckRoutes from './routes/decks';
+import cardRoutes from './routes/cards';
+import userRoutes from './routes/users'
+import progressRoutes from './routes/progress';
 dotenv.config();
 
 connectDB();
