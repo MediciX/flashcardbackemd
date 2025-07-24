@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import { Request, Response } from "express";
+import { Response } from "express";
 import Deck from "../models/DecksModel";
 import Card from "../models/CardsModel";
 import { AuthenticatedRequest } from "../middleware/auth";
@@ -39,15 +38,17 @@ export const getUserDecks = async (
 
 export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const query: any = { _id: req.params.id };
-
-    if (req.user?.role !== "admin") {
-      query.userId = req.user?.userId;
-    }
-    const deck = await Deck.findOne(query);
+    const deck = await Deck.findById(req.params.id);
 
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
+    }
+
+    const isOwner = deck.userId.toString() === req.user?.userId;
+    const isAdmin = req.user?.role === "admin";
+
+    if (!deck.isPublic && !isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Unauthorized to view this deck" });
     }
 
     res.json(deck);
@@ -56,6 +57,7 @@ export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 //PATCH /api/cards/:cardId
 export const updateDeck = async (req: AuthenticatedRequest, res: Response) => {
