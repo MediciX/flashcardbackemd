@@ -41,7 +41,7 @@ export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const query: any = { _id: req.params.id };
 
-    if (req.user?.role !== 'admin') {
+    if (req.user?.role !== "admin") {
       query.userId = req.user?.userId;
     }
     const deck = await Deck.findOne(query);
@@ -85,17 +85,22 @@ export const updateDeck = async (req: AuthenticatedRequest, res: Response) => {
 
 //DELETE /api/cards/:cardId
 export const deleteDeck = async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const userId = (req as any).user.userId;
-
   try {
-    const deleted = await Deck.findOneAndDelete({ _id: id, userId });
+    const del: any = { _id: req.params.id };
+
+    if (req.user?.role !== "admin") {
+      del.userId = req.user?.userId;
+    }
+
+    const deleted = await Deck.findOneAndDelete(del);
 
     if (!deleted) {
       return res
         .status(404)
         .json({ message: "Deck not found or unauthorized" });
     }
+
+    console.log(`[DELETE] query:`, del);
 
     res.json({ message: "Deck deleted successfully" });
   } catch (error) {
