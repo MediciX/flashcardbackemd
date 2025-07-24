@@ -27,7 +27,8 @@ export const getCardsInDeck = async (
 //POST /api/cards/:deckId
 export const createCard = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user?.userId;
-  const { deckId } = req.params;
+  const role = req.user?.role;
+  const deckId = req.params.deckId;
   const { front, back } = req.body;
 
   if (!front || !back)
@@ -40,6 +41,12 @@ export const createCard = async (req: AuthenticatedRequest, res: Response) => {
     const deck = await Deck.findOne({ _id: deckId, userId });
 
     if (!deck) return res.status(404).json({ message: "Deck not found" });
+
+    if (role !== "admin" && deck.userId.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to access this deck" });
+    }
 
     const card = await Card.create({ front, back, deckID: deckId });
     res.status(201).json(card);
