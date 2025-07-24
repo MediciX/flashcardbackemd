@@ -12,6 +12,11 @@ connectDB();
 
 const app = express();
 
+export const JWT_KEY = process.env.JWT_KEY;
+if (!JWT_KEY) {
+  throw new Error("JWT_KEY is missing in environment variables");
+}
+
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -22,8 +27,6 @@ app.use(express.json());
 
 app.get('/', (_, res) => {
   res.send('API running...');
-  const JWT_KEY = process.env.JWT_KEY;
-  console.log(JWT_KEY)
 });
 
 const PORT = process.env.PORT || 3000;

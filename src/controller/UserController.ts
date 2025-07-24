@@ -3,7 +3,11 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/UsersModel";
 
-const JWT_KEY = process.env.JWT_KEY!;
+const JWT_KEY = process.env.JWT_KEY;
+console.log("JWT_KEY:", JWT_KEY);
+if (!JWT_KEY) {
+  throw new Error("JWT_KEY is missing in env");
+}
 
 export const registerUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
