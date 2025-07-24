@@ -1,12 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
 import connectDB from './config/db';
 import deckRoutes from './routes/decks';
 import cardRoutes from './routes/cards';
 import userRoutes from './routes/users'
 import progressRoutes from './routes/progress';
 import cors from "cors";
-dotenv.config();
 
 connectDB();
 
