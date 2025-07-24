@@ -22,11 +22,14 @@ export const createDeck = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 //GET /api/cards/:deckId
-export const getUserDecks = async (req: AuthenticatedRequest, res: Response) => {
+export const getUserDecks = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   const userId = (req as any).user.userId;
 
   try {
-    const decks = await Deck.find({ $or: [ { isPublic: true }, { userId } ] });
+    const decks = await Deck.find({ $or: [{ isPublic: true }, { userId }] });
     res.json(decks);
   } catch (error) {
     console.error("[GET DECKS] Error:", error);
@@ -36,7 +39,12 @@ export const getUserDecks = async (req: AuthenticatedRequest, res: Response) => 
 
 export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const deck = await Deck.findOne({ _id: req.params.id, userId: req.user?.userId });
+    const deck = await Deck.findOne({
+      _id: req.params.id,
+      userId: req.user?.userId,
+    });
+    console.log("req.user?.userId", req.user?.userId);
+    console.log("req.params.id", req.params.id);
 
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
@@ -48,7 +56,6 @@ export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 //PATCH /api/cards/:cardId
 export const updateDeck = async (req: AuthenticatedRequest, res: Response) => {
@@ -149,7 +156,7 @@ export const importDeck = async (req: AuthenticatedRequest, res: Response) => {
     await newDeck.save();
 
     // สร้าง Cards ใหม่ ใส่ deckID ใหม่
-    const newCards = cards.map(card => ({
+    const newCards = cards.map((card) => ({
       front: card.front,
       back: card.back,
       deckID: newDeck._id,
