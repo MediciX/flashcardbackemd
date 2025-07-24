@@ -39,12 +39,12 @@ export const getUserDecks = async (
 
 export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const deck = await Deck.findOne({
-      _id: req.params.id,
-      userId: req.user?.userId,
-    });
-    console.log("req.user?.userId", req.user?.userId);
-    console.log("req.params.id", req.params.id);
+    const query: any = { _id: req.params.id };
+
+    if (req.user?.role !== 'admin') {
+      query.userId = req.user?.userId;
+    }
+    const deck = await Deck.findOne(query);
 
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
