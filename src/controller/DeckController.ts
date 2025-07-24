@@ -68,6 +68,7 @@ export const updateDeck = async (req: AuthenticatedRequest, res: Response) => {
     const query: any = { _id: id };
     if (!isAdmin) {
       query.userId = userId;
+      console.log(`role:`, !isAdmin);
     }
 
     const updated = await Deck.findOneAndUpdate(
