@@ -15,6 +15,11 @@ export const getCardsInDeck = async (
     const deck = await Deck.findById(deckId);
     if (!deck) return res.status(404).json({ message: "Deck not found" });
 
+    if (!deck.isPublic && deck.userId.toString() !== req.user?.userId) {
+  return res.status(403).json({ message: "Access denied" });
+}
+
+
     const cards = await Card.find({ deckID: deckId });
     res.json(cards);
   } catch (error) {
