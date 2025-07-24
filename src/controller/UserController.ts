@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/UsersModel";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
+const JWT_KEY = process.env.JWT_KEY!;
 
 export const registerUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -45,7 +45,7 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id }, JWT_KEY, {
       expiresIn: "7d",
     });
     res.json({
