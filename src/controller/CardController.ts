@@ -13,7 +13,7 @@ export const getCardsInDeck = async (
 
   try {
     const deck = await Deck.findById(deckId);
-    if (!deck) return res.status(404).json({ message: "Deck not found" });
+    if (!deck) return res.status(404).json({ message: "Deck not found g" });
 
     if (!deck.isPublic && deck.userId.toString() !== req.user?.userId) {
   return res.status(403).json({ message: "Access denied" });
@@ -42,9 +42,9 @@ export const createCard = async (req: AuthenticatedRequest, res: Response) => {
     return res.status(400).json({ message: "Invalid deck ID" });
 
   try {
-    const deck = await Deck.findOne({ _id: deckId, userId });
+    const deck = await Deck.findOne({ _id: deckId});
 
-    if (!deck) return res.status(404).json({ message: "Deck not found" });
+    if (!deck) return res.status(404).json({ message: "Deck not found c" });
 
     if (role !== "admin" && deck.userId.toString() !== userId) {
       return res
