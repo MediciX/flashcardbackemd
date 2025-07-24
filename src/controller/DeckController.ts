@@ -26,7 +26,7 @@ export const getUserDecks = async (req: Request, res: Response) => {
   const userId = (req as any).user.userId;
 
   try {
-    const decks = await Deck.find({ userId });
+    const decks = await Deck.find({ $or: [ { isPublic: true }, { userId } ] });
     res.json(decks);
   } catch (error) {
     console.error("[GET DECKS] Error:", error);
