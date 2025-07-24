@@ -24,12 +24,10 @@ export const registerUser = async (req: Request, res: Response) => {
 
     const newUser = new User({ username, password: hashedPassword });
     await newUser.save();
-    console.log("[REGISTER] User saved:", newUser);
 
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).json({ message: "User register successfully" });
   } catch (error) {
-    console.error("Register error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "registered error" });
   }
 };
 
@@ -39,14 +37,12 @@ export const loginUser = async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "Invalid user" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res
-        .status(400)
-        .json({ message: "Invalid credentials bcrypt.compare" });
+      return res.status(400).json({ message: "Invalid password" });
     }
 
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
@@ -60,17 +56,15 @@ export const loginUser = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Login error" });
   }
 };
 
-export const getUsers = async (req: Request, res: Response) => {
+export const getUsers = async (res: Response) => {
   try {
     const users = await User.find({});
     res.json(users);
   } catch (error) {
-    console.error("Fetch users error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Fetching user error" });
   }
 };
