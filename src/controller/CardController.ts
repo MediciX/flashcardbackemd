@@ -9,11 +9,10 @@ export const getCardsInDeck = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const userId = req.user?.userId;
   const { deckId } = req.params;
 
   try {
-    const deck = await Deck.findOne({ _id: deckId, userId });
+    const deck = await Deck.findById(deckId);
     if (!deck) return res.status(404).json({ message: "Deck not found" });
 
     const cards = await Card.find({ deckID: deckId });
