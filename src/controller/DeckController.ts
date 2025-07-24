@@ -60,13 +60,13 @@ export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
 //PATCH /api/cards/:cardId
 export const updateDeck = async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
-  const { deckname, isPublic } = req.body;
+  const { deckname, isPublic, description } = req.body;
   const userId = (req as any).user.userId;
 
   try {
     const updated = await Deck.findOneAndUpdate(
       { _id: id, userId },
-      { deckname, isPublic },
+      { deckname, isPublic, description },
       { new: true }
     );
 
