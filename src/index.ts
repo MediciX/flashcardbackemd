@@ -19,7 +19,7 @@ if (!JWT_KEY) {
 
 app.use(cors({
   origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
