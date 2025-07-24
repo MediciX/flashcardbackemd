@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/UsersModel";
 
 const JWT_KEY = process.env.JWT_KEY;
-console.log("JWT_KEY:", JWT_KEY);
+
 if (!JWT_KEY) {
   throw new Error("JWT_KEY is missing in env");
 }
@@ -49,7 +49,7 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ userId: user._id }, JWT_KEY, {
+    const token = jwt.sign({ userId: user._id, role: user.role, }, JWT_KEY, {
       expiresIn: "7d",
     });
     res.json({
