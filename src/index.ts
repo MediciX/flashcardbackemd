@@ -22,6 +22,8 @@ app.use(express.json());
 
 app.get('/', (_, res) => {
   res.send('API running...');
+  const JWT_KEY = process.env.JWT_KEY;
+  console.log(JWT_KEY)
 });
 
 const PORT = process.env.PORT || 3000;
