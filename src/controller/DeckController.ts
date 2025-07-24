@@ -3,7 +3,6 @@ import Deck from "../models/DecksModel";
 import Card from "../models/CardsModel";
 import { AuthenticatedRequest } from "../middleware/auth";
 
-//POST /api/cards/:deckId
 export const createDeck = async (req: AuthenticatedRequest, res: Response) => {
   const { deckname, description, isPublic = true } = req.body;
   const userId = (req as any).user.userId;
@@ -20,7 +19,6 @@ export const createDeck = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-//GET /api/cards/:deckId
 export const getUserDecks = async (
   req: AuthenticatedRequest,
   res: Response
@@ -48,7 +46,9 @@ export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
     const isAdmin = req.user?.role === "admin";
 
     if (!deck.isPublic && !isOwner && !isAdmin) {
-      return res.status(403).json({ message: "Unauthorized to view this deck" });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to view this deck" });
     }
 
     res.json(deck);
@@ -58,16 +58,20 @@ export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-
-//PATCH /api/cards/:cardId
 export const updateDeck = async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { deckname, isPublic, description } = req.body;
-  const userId = (req as any).user.userId;
+  const userId = req.user?.userId;
+  const isAdmin = req.user?.role === "admin";
 
   try {
+    const query: any = { _id: id };
+    if (!isAdmin) {
+      query.userId = userId;
+    }
+
     const updated = await Deck.findOneAndUpdate(
-      { _id: id, userId },
+      query,
       { deckname, isPublic, description },
       { new: true }
     );
@@ -75,7 +79,7 @@ export const updateDeck = async (req: AuthenticatedRequest, res: Response) => {
     if (!updated) {
       return res
         .status(404)
-        .json({ message: "Deck not found or unauthorized" });
+        .json({ message: "Deck not found or unauthorized up" });
     }
 
     res.json(updated);
@@ -85,24 +89,22 @@ export const updateDeck = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-//DELETE /api/cards/:cardId
 export const deleteDeck = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const del: any = { _id: req.params.id };
-
+    const query: any = { _id: req.params.id };
     if (req.user?.role !== "admin") {
-      del.userId = req.user?.userId;
+      query.userId = req.user?.userId;
     }
 
-    const deleted = await Deck.findOneAndDelete(del);
+    const deleted = await Deck.findOneAndDelete(query);
 
     if (!deleted) {
       return res
         .status(404)
-        .json({ message: "Deck not found or unauthorized" });
+        .json({ message: "Deck not found or unauthorized de" });
     }
 
-    console.log(`[DELETE] query:`, del);
+    console.log(`[DELETE DECK] query:`, query);
 
     res.json({ message: "Deck deleted successfully" });
   } catch (error) {
@@ -154,7 +156,6 @@ export const importDeck = async (req: AuthenticatedRequest, res: Response) => {
   }
 
   try {
-    // สร้าง Deck ใหม่ (ยึด userId เป็นเจ้าของ)
     const newDeck = new Deck({
       deckname: deck.deckname || "Untitled Deck",
       userId: userId,
@@ -162,7 +163,6 @@ export const importDeck = async (req: AuthenticatedRequest, res: Response) => {
     });
     await newDeck.save();
 
-    // สร้าง Cards ใหม่ ใส่ deckID ใหม่
     const newCards = cards.map((card) => ({
       front: card.front,
       back: card.back,

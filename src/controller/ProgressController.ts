@@ -3,7 +3,6 @@ import Progress from "../models/ProgressModel";
 import Card from "../models/CardsModel";
 import { AuthenticatedRequest } from "../middleware/auth";
 
-// GET /api/progress/:deckId
 export const getProgressInDeck = async (
   req: AuthenticatedRequest,
   res: Response
@@ -27,7 +26,6 @@ export const getProgressInDeck = async (
   }
 };
 
-// PATCH /api/progress/:cardId
 export const updateProgress = async (
   req: AuthenticatedRequest,
   res: Response

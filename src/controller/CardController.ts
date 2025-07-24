@@ -4,21 +4,21 @@ import mongoose from "mongoose";
 import Card from "../models/CardsModel";
 import Deck from "../models/DecksModel";
 
-//GET /api/cards/:deckId
 export const getCardsInDeck = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
   const { deckId } = req.params;
+  const userId = req.user?.userId;
+  const isAdmin = req.user?.role === "admin";
 
   try {
     const deck = await Deck.findById(deckId);
-    if (!deck) return res.status(404).json({ message: "Deck not found g" });
+    if (!deck) return res.status(404).json({ message: "Deck not found" });
 
-    if (!deck.isPublic && deck.userId.toString() !== req.user?.userId) {
-  return res.status(403).json({ message: "Access denied" });
-}
-
+    if (!deck.isPublic && !isAdmin && deck.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Access denied" });
+    }
 
     const cards = await Card.find({ deckID: deckId });
     res.json(cards);
@@ -28,28 +28,26 @@ export const getCardsInDeck = async (
   }
 };
 
-//POST /api/cards/:deckId
 export const createCard = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user?.userId;
-  const role = req.user?.role;
+  const isAdmin = req.user?.role === "admin";
   const deckId = req.params.deckId;
   const { front, back } = req.body;
 
-  if (!front || !back)
+  if (!front || !back) {
     return res.status(400).json({ message: "Front and Back are required" });
+  }
 
-  if (!mongoose.Types.ObjectId.isValid(deckId))
+  if (!mongoose.Types.ObjectId.isValid(deckId)) {
     return res.status(400).json({ message: "Invalid deck ID" });
+  }
 
   try {
-    const deck = await Deck.findOne({ _id: deckId});
+    const deck = await Deck.findById(deckId);
+    if (!deck) return res.status(404).json({ message: "Deck not found" });
 
-    if (!deck) return res.status(404).json({ message: "Deck not found c" });
-
-    if (role !== "admin" && deck.userId.toString() !== userId) {
-      return res
-        .status(403)
-        .json({ message: "Unauthorized to access this deck" });
+    if (!isAdmin && deck.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Unauthorized" });
     }
 
     const card = await Card.create({ front, back, deckID: deckId });
@@ -60,20 +58,25 @@ export const createCard = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-//PATCH /api/cards/:cardId
 export const updateCard = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user?.userId;
+  const isAdmin = req.user?.role === "admin";
   const { cardId } = req.params;
   const { front, back } = req.body;
 
   try {
     const card = await Card.findById(cardId).populate("deckID");
+    if (!card || !card.deckID) {
+      return res.status(404).json({ message: "Card or Deck not found" });
+    }
 
-    if (!card || (card.deckID as any).userId.toString() !== userId)
+    const deckOwnerId = (card.deckID as any).userId.toString();
+    if (!isAdmin && deckOwnerId !== userId) {
       return res.status(403).json({ message: "Unauthorized" });
+    }
 
-    card.front = front || card.front;
-    card.back = back || card.back;
+    card.front = front ?? card.front;
+    card.back = back ?? card.back;
     await card.save();
 
     res.json(card);
@@ -83,17 +86,19 @@ export const updateCard = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-//DELETE /api/cards/:cardId
 export const deleteCard = async (req: AuthenticatedRequest, res: Response) => {
-  const isAdmin = req.user?.role === "admin";
   const userId = req.user?.userId;
+  const isAdmin = req.user?.role === "admin";
   const { cardId } = req.params;
 
   try {
     const card = await Card.findById(cardId).populate("deckID");
-    const deckOwnerId = (card?.deckID as any)?.userId?.toString();
+    if (!card || !card.deckID) {
+      return res.status(404).json({ message: "Card or Deck not found" });
+    }
 
-    if (!card || (!isAdmin && deckOwnerId !== userId)) {
+    const deckOwnerId = (card.deckID as any).userId.toString();
+    if (!isAdmin && deckOwnerId !== userId) {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
