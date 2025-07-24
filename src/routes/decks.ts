@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUserDecks , createDeck, updateDeck, deleteDeck, importDeck, exportDeck } from '../controller/DeckController';
+import { getUserDecks , createDeck, updateDeck, deleteDeck, importDeck, exportDeck, getDeckById } from '../controller/DeckController';
 import { authenticate } from "../middleware/auth";
 import { validateCreateDeck } from "../validators/deckValidator";
 import { validate } from "../middleware/validate";
@@ -8,6 +8,7 @@ const router = express.Router()
 
 router.post("/", authenticate, validateCreateDeck, validate, createDeck);
 router.get("/", authenticate, getUserDecks)
+router.get("/:id", authenticate, getDeckById);
 router.patch("/:id", authenticate, validateCreateDeck, validate, updateDeck);
 router.delete("/:id", authenticate, deleteDeck)
 router.get("/:deckId/export", authenticate, exportDeck);

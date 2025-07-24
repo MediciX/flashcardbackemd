@@ -5,7 +5,7 @@ import Card from "../models/CardsModel";
 import { AuthenticatedRequest } from "../middleware/auth";
 
 //POST /api/cards/:deckId
-export const createDeck = async (req: Request, res: Response) => {
+export const createDeck = async (req: AuthenticatedRequest, res: Response) => {
   const { deckname, isPublic = true } = req.body;
   const userId = (req as any).user.userId;
 
@@ -22,7 +22,7 @@ export const createDeck = async (req: Request, res: Response) => {
 };
 
 //GET /api/cards/:deckId
-export const getUserDecks = async (req: Request, res: Response) => {
+export const getUserDecks = async (req: AuthenticatedRequest, res: Response) => {
   const userId = (req as any).user.userId;
 
   try {
@@ -34,8 +34,24 @@ export const getUserDecks = async (req: Request, res: Response) => {
   }
 };
 
+export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const deck = await Deck.findOne({ _id: req.params.id, userId: req.user?.userId });
+
+    if (!deck) {
+      return res.status(404).json({ message: "Deck not found" });
+    }
+
+    res.json(deck);
+  } catch (error) {
+    console.error("Error getting deck:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 //PATCH /api/cards/:cardId
-export const updateDeck = async (req: Request, res: Response) => {
+export const updateDeck = async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { deckname, isPublic } = req.body;
   const userId = (req as any).user.userId;
@@ -61,7 +77,7 @@ export const updateDeck = async (req: Request, res: Response) => {
 };
 
 //DELETE /api/cards/:cardId
-export const deleteDeck = async (req: Request, res: Response) => {
+export const deleteDeck = async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const userId = (req as any).user.userId;
 
