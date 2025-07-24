@@ -6,11 +6,11 @@ import { AuthenticatedRequest } from "../middleware/auth";
 
 //POST /api/cards/:deckId
 export const createDeck = async (req: AuthenticatedRequest, res: Response) => {
-  const { deckname, isPublic = true } = req.body;
+  const { deckname, description, isPublic = true } = req.body;
   const userId = (req as any).user.userId;
 
   try {
-    const newDeck = new Deck({ deckname, isPublic, userId });
+    const newDeck = new Deck({ deckname, description, isPublic, userId });
     await newDeck.save();
 
     res.status(201).json(newDeck);
