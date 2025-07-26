@@ -23,17 +23,23 @@ export const getUserDecks = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const userId = (req as any).user.userId;
+  const { userId, role } = (req as any).user;
 
   try {
-    const decks = await Deck.find({ $or: [{ isPublic: true }, { userId }] });
+    const decks = await Deck.find(
+      role === "admin"
+        ? {} 
+        : {
+            $or: [{ isPublic: true }, { userId }],
+          }
+    );
+
     res.json(decks);
   } catch (error) {
     console.error("[GET DECKS] Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
-
 export const getDeckById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const deck = await Deck.findById(req.params.id);
