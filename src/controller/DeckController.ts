@@ -10,14 +10,9 @@ export const createDeck = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const newDeck = new Deck({ deckname, description, isPublic, userId });
     await newDeck.save();
-    await newDeck.populate("userId", "_id");
-    const cleanDeck = {
-      ...newDeck.toObject(),
-      userId: newDeck.userId._id.toString(),
-    };
 
-    res.status(201).json(cleanDeck);
-    console.log("Deck created:", cleanDeck);
+    res.status(201).json(newDeck);
+    console.log("Deck created:", newDeck);
   } catch (error) {
     console.error("[CREATE DECK] Error:", error);
     res.status(500).json({ message: "Server error" });
