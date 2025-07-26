@@ -10,7 +10,7 @@ export const createDeck = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const newDeck = new Deck({ deckname, description, isPublic, userId });
     await newDeck.save();
-    await newDeck.populate("userId", "U_id");
+    await newDeck.populate("userId", "_id");
 
     res.status(201).json(newDeck);
     console.log("Deck created:", newDeck);
